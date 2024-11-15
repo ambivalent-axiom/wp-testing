@@ -1,6 +1,7 @@
 <?php 
 
 require get_theme_file_path('/inc/search-route.php');
+require get_theme_file_path('env.php');
 
 //You can create and add as many API fields as you like.
 function university_custom_rest() {
@@ -103,7 +104,7 @@ function pageBanner($args = NULL) {
 }
 
 function universityMapKey($api) {
-    $api['key'] = 'AIzaSyBU8XN5-Z6kS1a0iyqdaCW64-9gTwzIY4k';
+    $api['key'] = getGoogleApiKey();
     return $api;
 }
 add_filter('acf/fields/google_map/api', 'universityMapKey');
