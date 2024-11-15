@@ -16,7 +16,7 @@
                 </p>
                 </div>
 
-                <div class="generic-content" ><?php the_content() ?></div>
+                <div class="generic-content" ><?php the_field('main_body_content') ?></div>
 
                 <?php
                     //Loop for professors
@@ -42,10 +42,10 @@
                         {
                             $relatedProfessors->the_post();
                             ?>
-                                <div class="professor-card_list-item">
+                                <div class="professor-card__list-item">
                                     <a class="professor-card" href="<?php the_permalink() ?>">
                                         <img class="professor-card__image" src="<?php the_post_thumbnail_url('professorLandscape') ?>" alt="">
-                                        <span class="professor-card_name"><?php the_title() ?></span>
+                                        <span class="professor-card__name"><?php the_title() ?></span>
                                     </a>
                                 </div>
                             <?php 
