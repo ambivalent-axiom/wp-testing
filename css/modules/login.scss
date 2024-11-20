@@ -21,11 +21,11 @@ body.login {
 }
 
 .login h1 a {
-  color: $mainBlue;
-  font-size: 30px;
-  font-weight: 300;
-  background-image: none;
-  width: auto;
-  height: auto;
-  text-indent: 0;
+  color: $mainBlue !important;
+  font-size: 30px !important;
+  font-weight: 300 !important;
+  background-image: none !important;
+  width: auto !important;
+  height: auto !important;
+  text-indent: 0 !important;
 }
