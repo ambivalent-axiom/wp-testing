@@ -3,7 +3,7 @@ import $ from 'jquery';
 class Search {
     constructor() {
         this.addSearchHTML();
-        this.resultsDiv = $("#search-overlay__results")
+        this.resultsDiv = $("#search-overlay__results");
         this.openButton = $(".js-search-trigger");
         this.closeButton = $(".search-overlay__close");
         this.searchOverlay = $(".search-overlay");
@@ -144,4 +144,4 @@ class Search {
     }
 }
 
-export default Search
+export default Search;

@@ -1,6 +1,7 @@
 <?php 
 
 require get_theme_file_path('/inc/search-route.php');
+require get_theme_file_path('/inc/like-route.php');
 require get_theme_file_path('env.php');
 
 //You can create and add as many API fields as you like.
@@ -10,12 +11,17 @@ function university_custom_rest() {
             return get_the_author();
         }
     ));
+    register_rest_field('note', 'userNoteCount', array(
+        'get_callback' => function() {
+            return count_user_posts(get_current_user_id(), 'note');
+        }
+    ));
 }
 
 add_action('rest_api_init', 'university_custom_rest');
 
 function university_files() {
-    wp_enqueue_script('googleMap', '//maps.googleapis.com/maps/api/js?key=AIzaSyBU8XN5-Z6kS1a0iyqdaCW64-9gTwzIY4k', NULL, '1.0', true);
+    wp_enqueue_script('googleMap', '//maps.googleapis.com/maps/api/js?key=' . getGoogleApiKey(), NULL, '1.0', true);
     wp_enqueue_script('main_university_js', get_theme_file_uri('/build/index.js'), array('jquery'), '1.0', true);
     wp_enqueue_style('university_main_style', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
     wp_enqueue_style('university_extra_style', get_theme_file_uri('/build/index.css'));
@@ -23,7 +29,8 @@ function university_files() {
     wp_enqueue_style('custom_google_fonts', '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
     //this will expose a variable for javascript in frontend
     wp_localize_script('main_university_js', 'universityData', array(
-        'root_url' => get_site_url()
+        'root_url' => get_site_url(),
+        'nonce' => wp_create_nonce('wp_rest'),
     ));
 
 }
@@ -146,4 +153,18 @@ function ourLoginTitle() {
     return get_bloginfo('name');
 }
 
-
+//force note posts to be private and sanitize content
+add_filter('wp_insert_post_data', 'makeNotePrivate', 10, 2); //10 is the priority, 2 is the number of arguments, by default it's 1
+function makeNotePrivate($data, $postarr) {
+    if ($data['post_type'] == 'note') {
+        if (count_user_posts(get_current_user_id(), 'note') > 4 AND !$postarr['ID']) { //allow only 5 notes per user !data['ID'] OR !$postarr['ID'] means this is a new note because it doesn't have an ID yet
+            die('You have reached your note limit.');
+        }
+        $data['post_content'] = sanitize_textarea_field($data['post_content']); //WP function to sanitize text no matter the user role
+        $data['post_title'] = sanitize_text_field($data['post_title']); //WP function to sanitize title no matter the user role
+    }
+    if ($data['post_type'] == 'note' AND $data['post_status'] != 'trash') {
+        $data['post_status'] = 'private';
+    }
+    return $data;
+}
